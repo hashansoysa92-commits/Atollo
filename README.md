@@ -1,6 +1,6 @@
 # Atollo
 
-Google Apps Script marketplace web application prepared for GitHub + `clasp` development.
+Google Apps Script marketplace web application prepared for GitHub + `clasp` development and production deployment.
 
 ## Project files
 
@@ -9,8 +9,9 @@ Google Apps Script marketplace web application prepared for GitHub + `clasp` dev
 - `Member.html` — member login/dashboard
 - `Admin.html` — administrator login/dashboard
 - `appsscript.json` — Apps Script manifest
+- `.github/workflows/deploy-apps-script.yml` — secure production deployment workflow
 
-The repository also includes Node/`clasp` helper files so the project can be linked to an existing Google Apps Script project and pushed from a local computer or GitHub workflow.
+The four canonical Apps Script source files were restored and validated from the supplied source package. The backend passes a Node/V8 syntax check and the manifest is valid JSON.
 
 ## Apps Script manifest
 
@@ -25,7 +26,17 @@ The manifest is configured with:
 - Web app execution: deploying user
 - Web app access: anonymous/public
 
-## Link this repository to Google Apps Script
+## GitHub Actions production deployment
+
+The repository includes a manual workflow named **Deploy Atollo to Google Apps Script**. It validates the project, pushes the complete source with the current `@google/clasp` CLI, and creates or updates the Apps Script deployment.
+
+For security, Google OAuth data is never committed to the repository. The workflow reads these GitHub Actions secrets:
+
+- `APPS_SCRIPT_ID` — target Apps Script Script ID
+- `CLASPRC_JSON` — the authorized Google `~/.clasprc.json` contents
+- `APPS_SCRIPT_DEPLOYMENT_ID` — optional; set this to update an existing production deployment instead of creating a new one
+
+## Link locally with clasp
 
 1. Install Node.js 18+.
 2. Clone this repository.
@@ -33,15 +44,17 @@ The manifest is configured with:
 4. Run `npm run login` and sign in to the Google account that owns the Apps Script project.
 5. Copy `.clasp.example.json` to `.clasp.json`.
 6. Replace `PASTE_YOUR_GOOGLE_APPS_SCRIPT_ID_HERE` with the Script ID from **Apps Script → Project Settings → Script ID**.
-7. Run `npm run push`.
+7. Run `npm run push:force`.
 
 Useful commands:
 
 ```bash
 npm run push
+npm run push:force
 npm run pull
 npm run open
 npm run deployments
+npm run deploy
 ```
 
 ## First-time Apps Script setup
@@ -61,10 +74,10 @@ After the source has been pushed to Apps Script:
 - Member: `/exec?page=member`
 - Admin: `/exec?page=admin`
 
-## Security note
+## Security
 
-`.clasp.json` is intentionally ignored because it contains the Google Apps Script Script ID for the linked project. Do not commit private tokens, passwords, OAuth client secrets, service-account keys, or other credentials to this repository.
+`.clasp.json`, `.clasprc.json`, OAuth tokens, passwords and Google credentials must not be committed. The deployment workflow writes OAuth material only to the temporary GitHub Actions runner and removes it after the run.
 
-## Source recovery helper
+## Source recovery
 
-`.source/atollo-source.tar.xz.b64` is a compressed backup of the four supplied Apps Script source files. The repository workflow restores the canonical `Code.gs`, `Index.html`, `Member.html`, and `Admin.html` files when that source bundle changes.
+The `.source/` directory contains the verified compressed source bundle parts used by the restore workflow. `.source/READY` records the verified source-bundle SHA-256. The restore workflow recreates the canonical `Code.gs`, `Index.html`, `Member.html`, and `Admin.html` files from that bundle.
