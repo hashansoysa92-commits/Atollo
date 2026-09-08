@@ -8,8 +8,9 @@
     "pull": "clasp pull",
     "push": "clasp push",
     "push:force": "clasp push --force",
-    "open": "clasp open",
-    "deployments": "clasp deployments"
+    "open": "clasp open-script",
+    "deployments": "clasp list-deployments",
+    "deploy": "clasp create-deployment --description \"Atollo production\""
   },
   "devDependencies": {
     "@google/clasp": "latest"
