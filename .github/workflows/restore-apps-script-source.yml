@@ -1,0 +1,73 @@
+name: Restore Apps Script source
+
+on:
+  push:
+    paths:
+      - '.source/atollo-source.tar.xz.b64'
+
+permissions:
+  contents: write
+
+jobs:
+  restore-source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore canonical Apps Script files
+        shell: bash
+        run: |
+          python - <<'PY'
+          import base64
+          import io
+          import lzma
+          import tarfile
+          from pathlib import Path
+
+          bundle = Path('.source/atollo-source.tar.xz.b64')
+          payload = ''.join(bundle.read_text(encoding='ascii').split())
+          tar_bytes = lzma.decompress(base64.b64decode(payload))
+          allowed = {'Code.gs', 'Index.html', 'Member.html', 'Admin.html'}
+
+          with tarfile.open(fileobj=io.BytesIO(tar_bytes), mode='r:') as archive:
+              members = archive.getmembers()
+              names = {m.name for m in members if m.isfile()}
+              if names != allowed:
+                  raise RuntimeError(f'Unexpected source bundle contents: {sorted(names)}')
+              for member in members:
+                  if not member.isfile():
+                      continue
+                  extracted = archive.extractfile(member)
+                  if extracted is None:
+                      raise RuntimeError(f'Could not extract {member.name}')
+                  Path(member.name).write_bytes(extracted.read())
+          PY
+
+      - name: Validate restored project
+        shell: bash
+        run: |
+          test -s Code.gs
+          test -s Index.html
+          test -s Member.html
+          test -s Admin.html
+          python -m json.tool appsscript.json >/dev/null
+          grep -q 'function doGet' Code.gs
+          grep -q '<!DOCTYPE html>' Index.html
+          grep -q '<!DOCTYPE html>' Member.html
+          grep -q '<!DOCTYPE html>' Admin.html
+
+      - name: Commit restored source
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Code.gs Index.html Member.html Admin.html
+          if git diff --cached --quiet; then
+            echo 'Source files are already current.'
+            exit 0
+          fi
+          git commit -m 'Restore Apps Script source files'
+          git push
