@@ -1,0 +1,97 @@
+name: Deploy Atollo to Google Apps Script
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atollo-apps-script-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      APPS_SCRIPT_ID: ${{ secrets.APPS_SCRIPT_ID }}
+      CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
+      APPS_SCRIPT_DEPLOYMENT_ID: ${{ secrets.APPS_SCRIPT_DEPLOYMENT_ID }}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate deployment credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${APPS_SCRIPT_ID:-}" ]; then
+            echo "::error::Missing GitHub secret APPS_SCRIPT_ID."
+            exit 1
+          fi
+          if [ -z "${CLASPRC_JSON:-}" ]; then
+            echo "::error::Missing GitHub secret CLASPRC_JSON. Authorize clasp once with the Google account that owns the Apps Script project, then store ~/.clasprc.json as this secret."
+            exit 1
+          fi
+
+      - name: Install clasp
+        shell: bash
+        run: npm install --no-audit --no-fund
+
+      - name: Build secure clasp configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s' "$CLASPRC_JSON" > "$HOME/.clasprc.json"
+          chmod 600 "$HOME/.clasprc.json"
+          node - <<'NODE'
+          const fs = require('fs');
+          const scriptId = String(process.env.APPS_SCRIPT_ID || '').trim();
+          if (!scriptId) throw new Error('APPS_SCRIPT_ID is empty');
+          fs.writeFileSync('.clasp.json', JSON.stringify({ scriptId, rootDir: '.' }, null, 2) + '\n');
+          NODE
+
+      - name: Validate project before publish
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s Code.gs
+          test -s Index.html
+          test -s Member.html
+          test -s Admin.html
+          node -e "JSON.parse(require('fs').readFileSync('appsscript.json','utf8'));"
+          cp Code.gs /tmp/Atollo-Code.js
+          node --check /tmp/Atollo-Code.js
+          npx clasp show-file-status
+
+      - name: Push source to Apps Script
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx clasp push --force
+
+      - name: Create or update production deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          DESCRIPTION="Atollo production ${GITHUB_SHA::7}"
+          if [ -n "${APPS_SCRIPT_DEPLOYMENT_ID:-}" ]; then
+            npx clasp create-deployment --deploymentId "$APPS_SCRIPT_DEPLOYMENT_ID" --description "$DESCRIPTION"
+          else
+            npx clasp create-deployment --description "$DESCRIPTION"
+          fi
+          echo "Current deployments:"
+          npx clasp list-deployments
+
+      - name: Remove OAuth material
+        if: always()
+        shell: bash
+        run: |
+          rm -f "$HOME/.clasprc.json" .clasp.json
