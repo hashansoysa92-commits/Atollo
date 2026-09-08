@@ -3,7 +3,7 @@ name: Restore Apps Script source
 on:
   push:
     paths:
-      - '.source/atollo-source.tar.xz.b64'
+      - '.source/READY'
 
 permissions:
   contents: write
@@ -27,8 +27,10 @@ jobs:
           import tarfile
           from pathlib import Path
 
-          bundle = Path('.source/atollo-source.tar.xz.b64')
-          payload = ''.join(bundle.read_text(encoding='ascii').split())
+          parts = sorted(Path('.source').glob('atollo-source.part*.b64'))
+          if not parts:
+              raise RuntimeError('No source bundle parts were found.')
+          payload = ''.join(''.join(p.read_text(encoding='ascii').split()) for p in parts)
           tar_bytes = lzma.decompress(base64.b64decode(payload))
           allowed = {'Code.gs', 'Index.html', 'Member.html', 'Admin.html'}
 
