@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en" data-initial-site-name="<?= initialBrand.siteName ?>" data-initial-site-mark="<?= initialBrand.mark ?>">
+<head>
+  <base target="_self">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="<?= pageDescription ?>">
+    <meta name="theme-color" content="#087f8c">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+<title><?= pageTitle ?></title>
+  <style>
+    :root {
+      --primary: #087f8c;
+      --primary-dark: #05606a;
+      --secondary: #13b8a6;
+      --accent: #ffb703;
+      --navy: #102a43;
+      --text: #243b53;
+      --muted: #64748b;
+      --bg: #f5f8fb;
+      --surface: #ffffff;
+      --line: #dce5ed;
+      --danger: #d64545;
+      --success: #16865a;
+      --shadow: 0 14px 35px rgba(16, 42, 67, .10);
+      --radius: 18px;
+      --header-height: 72px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+    }
+    body.dark {
+      --bg: #0c1724;
+      --surface: #132235;
+      --line: #29405a;
+      --text: #eaf2f8;
+      --muted: #a9b9c8;
+      --navy: #f5fbff;
+      --shadow: 0 18px 45px rgba(0,0,0,.28);
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    .container { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+    .section { padding: 72px 0; }
+    .section-title {
+      display: flex; justify-content: space-between; gap: 20px; align-items: end;
+      margin-bottom: 28px;
+    }
+    .section-title h2 { margin: 0; color: var(--navy); font-size: clamp(1.65rem, 3vw, 2.35rem); line-height: 1.15; }
+    .section-title p { margin: 8px 0 0; color: var(--muted); max-width: 650px; }
+    .eyebrow { color: var(--primary); font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 800; }
+
+    .header {
+      height: var(--header-height);
+      position: sticky; top: 0; z-index: 50;
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+    .nav { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 900; color: var(--navy); font-size: 1.14rem; }
+    .brand-mark {
+      width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center;
+      color: #fff; background: linear-gradient(135deg, var(--primary), var(--secondary));
+      box-shadow: 0 8px 20px rgba(8,127,140,.28); font-size: 1.25rem; flex:0 0 auto;
+    }
+    .brand-logo { display:none; max-width:150px; max-height:48px; width:auto; height:auto; object-fit:contain; flex:0 0 auto; }
+    .footer .brand-logo { max-width:180px; max-height:58px; }
+    .brand.logo-active [data-site-name].hide-when-logo { display:inline; }
+    .nav-links { display: flex; align-items: center; gap: 24px; font-weight: 700; font-size: .93rem; }
+    .nav-links a:hover { color: var(--primary); }
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
+    .icon-btn {
+      width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 13px;
+      background: var(--surface); color: var(--text); display: grid; place-items: center;
+    }
+    .btn {
+      border: 0; border-radius: 13px; padding: 12px 18px; font-weight: 800;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; box-shadow: 0 9px 22px rgba(8,127,140,.23); }
+    .btn-outline { background: var(--surface); color: var(--primary); border: 1px solid var(--primary); }
+    .btn-soft { background: rgba(8,127,140,.10); color: var(--primary); }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .menu-btn { display: none; }
+
+    .hero {
+      position: relative; overflow: hidden; padding: 78px 0 54px;
+      background:
+        radial-gradient(circle at 86% 15%, rgba(19,184,166,.25), transparent 33%),
+        radial-gradient(circle at 10% 10%, rgba(255,183,3,.18), transparent 28%),
+        linear-gradient(135deg, #effcfc, #f7fbff 55%, #fff8e8);
+    }
+    body.dark .hero { background: radial-gradient(circle at 82% 20%, rgba(19,184,166,.18), transparent 34%), linear-gradient(145deg, #0e1c2d, #13283c); }
+    .hero-grid { display: grid; grid-template-columns: 1.08fr .92fr; align-items: center; gap: 58px; }
+    .hero h1 { margin: 12px 0 18px; font-size: clamp(2.35rem, 5.4vw, 4.8rem); line-height: .99; color: var(--navy); letter-spacing: -.045em; }
+    .hero h1 span { color: var(--primary); }
+    .hero-copy { color: var(--muted); font-size: 1.08rem; max-width: 650px; }
+    .search-box {
+      margin-top: 30px; padding: 12px; border-radius: 20px; background: var(--surface);
+      display: grid; grid-template-columns: 1.4fr .9fr .9fr auto; gap: 9px;
+      box-shadow: var(--shadow); border: 1px solid var(--line);
+    }
+    .field-wrap { display: flex; align-items: center; gap: 9px; border-right: 1px solid var(--line); padding: 0 12px; min-width: 0; }
+    .field-wrap:nth-child(3) { border-right: 0; }
+    .field-wrap input, .field-wrap select { width: 100%; border: 0; outline: 0; color: var(--text); background: transparent; min-width: 0; }
+    .hero-stats { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 28px; }
+    .stat strong { display: block; color: var(--navy); font-size: 1.35rem; }
+    .stat span { color: var(--muted); font-size: .85rem; }
+    .hero-card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 28px;
+      box-shadow: var(--shadow); padding: 18px; position: relative;
+    }
+    .hero-card img { height: 390px; width: 100%; object-fit: cover; border-radius: 20px; }
+    .hero-badge {
+      position: absolute; left: -20px; bottom: 38px; padding: 15px 18px; border-radius: 16px;
+      background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); font-weight: 800;
+    }
+    .hero-badge small { display: block; color: var(--muted); font-weight: 600; }
+
+    .category-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+    .category-card {
+      border: 1px solid var(--line); background: var(--surface); border-radius: 18px; padding: 22px 14px;
+      text-align: center; transition: .2s ease; position: relative; overflow: hidden;
+    }
+    .category-card:hover { transform: translateY(-5px); border-color: var(--secondary); box-shadow: var(--shadow); }
+    .category-icon { width: 54px; height: 54px; border-radius: 17px; margin: 0 auto 12px; display: grid; place-items: center; background: rgba(8,127,140,.10); font-size: 1.55rem; }
+    .category-card h3 { font-size: .92rem; margin: 0 0 5px; color: var(--navy); }
+    .category-card span { font-size: .78rem; color: var(--muted); }
+
+    .listings-layout { display: grid; grid-template-columns: 250px 1fr; gap: 24px; align-items: start; }
+    .filters {
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px;
+      position: sticky; top: 92px;
+    }
+    .filters h3 { margin: 0 0 18px; color: var(--navy); }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; font-size: .78rem; font-weight: 800; color: var(--muted); margin-bottom: 7px; }
+    .input {
+      width: 100%; border: 1px solid var(--line); background: var(--surface); color: var(--text);
+      border-radius: 12px; padding: 11px 12px; outline: none;
+    }
+    .input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(8,127,140,.12); }
+    .listing-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 15px; }
+    .listing-toolbar strong { color: var(--navy); }
+    .listing-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .listing-card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 19px; overflow: hidden;
+      transition: .2s ease; min-width: 0;
+    }
+    .listing-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+    .listing-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #dfe8ee; }
+    .listing-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; }
+    .listing-card:hover .listing-media img { transform: scale(1.04); }
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px; border-radius: 99px; padding: 5px 9px;
+      font-weight: 800; font-size: .68rem;
+    }
+    .badge-featured { background: var(--accent); color: #4d3700; position: absolute; left: 12px; top: 12px; }
+    .badge-verified { background: #def8ef; color: #0b7751; }
+    .fav-btn {
+      position: absolute; top: 10px; right: 10px; width: 38px; height: 38px; border: 0; border-radius: 50%;
+      background: rgba(255,255,255,.92); color: #334e68; display: grid; place-items: center; font-size: 1.15rem;
+    }
+    .fav-btn.active { color: #e23d5b; }
+    .listing-body { padding: 16px; }
+    .listing-meta { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: .73rem; }
+    .listing-title { margin: 10px 0 8px; font-size: 1rem; color: var(--navy); line-height: 1.35; min-height: 43px; }
+    .listing-price { font-size: 1.24rem; color: var(--primary); font-weight: 900; }
+    .listing-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 13px; border-top: 1px solid var(--line); font-size: .76rem; color: var(--muted); }
+    .seller { display: flex; align-items: center; gap: 7px; min-width: 0; }
+    .seller-avatar { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: rgba(8,127,140,.12); color: var(--primary); font-weight: 900; }
+
+    .jobs-panel { padding: 30px; border-radius: 24px; color: #fff; background: linear-gradient(135deg, #0a6873, #0f9d8e); }
+    .jobs-panel .section-title h2, .jobs-panel .section-title p { color: #fff; }
+    .jobs-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+    .job-card { background: rgba(255,255,255,.96); color: var(--text); padding: 20px; border-radius: 17px; }
+    .job-head { display: flex; gap: 12px; align-items: center; }
+    .company-logo { width: 46px; height: 46px; border-radius: 13px; background: #e9f5f5; display: grid; place-items: center; font-weight: 900; color: var(--primary); }
+    .job-card h3 { margin: 0; color: #102a43; font-size: 1rem; }
+    .job-card p { margin: 4px 0 0; color: #64748b; font-size: .78rem; }
+    .job-tags { display: flex; flex-wrap: wrap; gap: 7px; margin: 16px 0; }
+    .job-tag { font-size: .7rem; background: #eef6f7; color: #176b73; border-radius: 99px; padding: 5px 8px; font-weight: 700; }
+
+    .how-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    .step { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 23px; }
+    .step-number { width: 39px; height: 39px; border-radius: 12px; background: var(--primary); color: #fff; display: grid; place-items: center; font-weight: 900; }
+    .step h3 { color: var(--navy); margin: 16px 0 7px; }
+    .step p { color: var(--muted); margin: 0; font-size: .88rem; }
+
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .price-card { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 27px; position: relative; }
+    .price-card.featured { border: 2px solid var(--primary); box-shadow: var(--shadow); transform: translateY(-6px); }
+    .recommended { position: absolute; right: 18px; top: 18px; color: var(--primary); background: rgba(8,127,140,.10); border-radius: 99px; padding: 5px 9px; font-size: .68rem; font-weight: 900; }
+    .price-card h3 { color: var(--navy); margin: 0; }
+    .price { font-size: 2.35rem; color: var(--navy); font-weight: 900; margin: 16px 0 4px; }
+    .price small { font-size: .9rem; color: var(--muted); font-weight: 700; }
+    .features { list-style: none; margin: 22px 0; padding: 0; color: var(--muted); }
+    .features li { margin: 10px 0; }
+    .features li::before { content: "✓"; color: var(--success); font-weight: 900; margin-right: 9px; }
+
+    .safety {
+      border-radius: 24px; background: linear-gradient(135deg, #fff6d8, #e9fbf9); border: 1px solid #e6ddbd;
+      display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; padding: 34px;
+    }
+    body.dark .safety { background: #172b3b; border-color: var(--line); }
+    .safety h2 { color: var(--navy); margin: 0 0 8px; }
+    .safety p { color: var(--muted); margin: 0; }
+
+    .footer { background: #0d2636; color: #dce8ef; padding: 54px 0 92px; }
+    .footer-grid { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 38px; }
+    .footer h3 { color: #fff; margin-top: 0; }
+    .footer p, .footer a { color: #aac0ce; font-size: .88rem; }
+    .footer a { display: block; margin: 9px 0; }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.12); margin-top: 34px; padding-top: 20px; display: flex; justify-content: space-between; gap: 15px; color: #8fa9b8; font-size: .78rem; }
+
+    .mobile-bottom { display: none; }
+    .modal {
+      position: fixed; inset: 0; z-index: 100; background: rgba(4,16,27,.62); display: none; place-items: center;
+      padding: 18px; backdrop-filter: blur(5px);
+    }
+    .modal.open { display: grid; }
+    .modal-card { width: min(720px, 100%); max-height: 92vh; overflow: auto; background: var(--surface); border-radius: 23px; box-shadow: 0 30px 90px rgba(0,0,0,.32); }
+    .modal-head { position: sticky; top: 0; z-index: 3; background: var(--surface); border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; padding: 20px 22px; }
+    .modal-head h2 { margin: 0; color: var(--navy); }
+    .modal-body { padding: 22px; }
+    .close-btn { width: 39px; height: 39px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 1.2rem; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .form-grid .full { grid-column: 1 / -1; }
+    .auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; background: var(--bg); padding: 6px; border-radius: 14px; }
+    .auth-tab { border: 0; border-radius: 10px; padding: 10px; background: transparent; color: var(--muted); font-weight: 800; }
+    .auth-tab.active { background: var(--surface); color: var(--primary); box-shadow: 0 3px 12px rgba(0,0,0,.08); }
+    .detail-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 22px; }
+    .detail-image { width: 100%; height: 330px; object-fit: cover; border-radius: 16px; }
+    .detail-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 18px; }
+    .toast {
+      position: fixed; right: 18px; bottom: 88px; z-index: 150; background: #102a43; color: #fff;
+      padding: 13px 17px; border-radius: 13px; box-shadow: var(--shadow); opacity: 0; transform: translateY(15px); pointer-events: none; transition: .25s ease;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .empty { grid-column: 1 / -1; background: var(--surface); border: 1px dashed var(--line); border-radius: 18px; text-align: center; padding: 44px 20px; color: var(--muted); }
+    .system-notice { margin: 18px auto 0; max-width: 1180px; padding: 14px 18px; border-radius: 14px; border: 1px solid #f0c36a; background: #fff8e6; color: #79520a; font-weight: 700; }
+    .system-notice.error { border-color: #efb2b8; background: #fff0f1; color: #9f2638; }
+
+    @media (max-width: 1050px) {
+      .nav-links { display: none; position: absolute; left: 16px; right: 16px; top: 77px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; box-shadow: var(--shadow); flex-direction: column; align-items: stretch; }
+      .nav-links.open { display: flex; }
+      .menu-btn { display: grid; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-card { display: none; }
+      .category-grid { grid-template-columns: repeat(4, 1fr); }
+      .listing-grid { grid-template-columns: repeat(2, 1fr); }
+      .jobs-list { grid-template-columns: repeat(2, 1fr); }
+      .how-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 780px) {
+      body { padding-bottom: 70px; }
+      .container { width: min(100% - 22px, 1180px); }
+      .header .btn-outline, .header .post-desktop { display: none; }
+      .hero { padding-top: 54px; }
+      .search-box { grid-template-columns: 1fr; }
+      .field-wrap { border: 1px solid var(--line) !important; border-radius: 12px; padding: 11px 12px; }
+      .search-box .btn { width: 100%; }
+      .category-grid { grid-template-columns: repeat(3, 1fr); }
+      .listings-layout { grid-template-columns: 1fr; }
+      .filters { position: static; display: none; }
+      .filters.open { display: block; }
+      .filter-mobile { display: inline-flex !important; }
+      .pricing-grid, .jobs-list { grid-template-columns: 1fr; }
+      .price-card.featured { transform: none; }
+      .safety { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .mobile-bottom {
+        display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; bottom: 0; left: 0; right: 0; height: 66px;
+        background: var(--surface); border-top: 1px solid var(--line); z-index: 70;
+      }
+      .mobile-bottom button, .mobile-bottom a { border: 0; background: transparent; color: var(--muted); display: grid; place-items: center; align-content: center; gap: 2px; font-size: .68rem; }
+      .mobile-bottom span { font-size: 1.15rem; }
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .section { padding: 54px 0; }
+      .category-grid { grid-template-columns: repeat(2, 1fr); }
+      .listing-grid { grid-template-columns: 1fr; }
+      .how-grid, .form-grid { grid-template-columns: 1fr; }
+      .form-grid .full { grid-column: auto; }
+      .hero-stats { gap: 16px; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom, .section-title { align-items: flex-start; flex-direction: column; }
+      .listing-toolbar { align-items: stretch; flex-direction: column; }
+    }
+
+
+    /* Mobile clarity + performance-friendly layout */
+    html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
+    .btn,.icon-btn,.input{min-height:46px}.listing-media img{content-visibility:auto}.listing-pager{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin:24px 0 4px}.listing-pager small{color:var(--muted);font-weight:700}.listing-pager .btn{min-width:150px}.listing-loading{opacity:.65;pointer-events:none}
+    @media(max-width:780px){
+      body{font-size:16px}.header{height:64px}.nav{gap:10px}.brand{font-size:1rem}.brand-mark{width:40px;height:40px}.hero{padding:42px 0 34px}.hero h1{font-size:clamp(2.15rem,12vw,3.5rem);line-height:1.02}.hero-copy{font-size:1rem}.section{padding:46px 0}.section-title{margin-bottom:20px}.section-title h2{font-size:1.75rem}.category-card{padding:18px 10px}.listing-grid{gap:12px}.listing-card{border-radius:16px}.listing-body{padding:13px}.listing-title{font-size:1.02rem;min-height:auto}.listing-price{font-size:1.16rem}.listing-footer{align-items:flex-start;gap:8px}.filters{border-radius:16px}.modal{padding:8px}.modal-card{border-radius:18px;max-height:96vh}.modal-body{padding:16px}.detail-image{height:auto;aspect-ratio:4/3}.mobile-bottom{padding-bottom:env(safe-area-inset-bottom);height:calc(66px + env(safe-area-inset-bottom))}
+    }
+    @media(max-width:420px){.container{width:calc(100% - 18px)}.category-grid{gap:9px}.category-card h3{font-size:.84rem}.listing-grid{grid-template-columns:1fr}.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);width:100%;gap:8px}.hero-stats .stat{font-size:.72rem}.hero-stats .stat strong{font-size:1.05rem}.listing-pager .btn{width:100%}}
+
+
+    /* Ethical engagement: useful return visits without coercive dark patterns */
+    [hidden]{display:none!important}
+    :focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 80%,#fff);outline-offset:3px}
+    .hero-card{border:0;text-align:left;color:inherit;width:100%;cursor:pointer;transition:transform .25s ease,box-shadow .25s ease}
+    .hero-card:hover{transform:translateY(-4px)}.hero-card:focus-visible{outline-offset:6px}.hero-card:disabled{cursor:default}
+    .hero-overlay{position:absolute;left:34px;right:34px;bottom:26px;padding:18px;border-radius:17px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid color-mix(in srgb,var(--line) 75%,transparent);backdrop-filter:blur(12px);box-shadow:0 16px 35px rgba(16,42,67,.18)}
+    .hero-overlay small{display:block;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}.hero-overlay strong{display:block;color:var(--navy);font-size:1.1rem;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hero-overlay span{display:block;color:var(--primary);font-weight:900;margin-top:5px}
+    .quick-discovery{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px;color:var(--muted);font-size:.84rem}.quick-chips{display:flex;gap:8px;flex-wrap:wrap}.quick-chip{border:1px solid var(--line);background:color-mix(in srgb,var(--surface) 88%,transparent);color:var(--text);padding:8px 11px;border-radius:999px;font-weight:800;font-size:.78rem;transition:.2s ease}.quick-chip:hover{border-color:var(--secondary);color:var(--primary);transform:translateY(-1px)}
+    .resume-search{border:0;background:transparent;color:var(--primary);font-weight:900;padding:8px 4px}.return-strip{padding:14px 0;background:color-mix(in srgb,var(--surface) 82%,var(--bg));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.return-inner{display:flex;align-items:center;justify-content:space-between;gap:18px}.return-copy strong{display:block;color:var(--navy);font-size:1rem}.return-copy span{color:var(--muted);font-size:.86rem}.return-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .trust-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px}.trust-item{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid color-mix(in srgb,var(--line) 80%,transparent);border-radius:14px;background:color-mix(in srgb,var(--surface) 78%,transparent)}.trust-item b{display:block;color:var(--navy);font-size:.82rem}.trust-item small{display:block;color:var(--muted);font-size:.72rem}.trust-icon{font-size:1.15rem}
+    .personal-tabs{display:flex;gap:8px;flex-wrap:wrap}.personal-tabs .btn.active{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border-color:transparent}.personal-note{margin-top:14px;color:var(--muted);font-size:.8rem;display:flex;align-items:center;gap:7px;flex-wrap:wrap}.mini-empty{grid-column:1/-1;padding:28px;border:1px dashed var(--line);border-radius:18px;text-align:center;color:var(--muted);background:var(--surface)}
+    .new-badge,.viewed-badge{position:absolute;left:12px;bottom:12px;border-radius:999px;padding:5px 9px;font-size:.67rem;font-weight:900;box-shadow:0 5px 14px rgba(16,42,67,.14)}.new-badge{background:#eaf9f3;color:#0d704a}.viewed-badge{background:rgba(16,42,67,.88);color:#fff}.listing-card{cursor:pointer}.listing-card:focus-visible{outline-offset:4px}
+    .skeleton{position:relative;overflow:hidden;background:color-mix(in srgb,var(--line) 55%,var(--surface));border-radius:12px}.skeleton::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.65),transparent);animation:shimmer 1.25s infinite}.skeleton-card{background:var(--surface);border:1px solid var(--line);border-radius:19px;padding:14px}.skeleton-media{height:190px}.skeleton-line{height:13px;margin-top:12px}.skeleton-line.short{width:56%}.skeleton-line.price{height:20px;width:42%}@keyframes shimmer{100%{transform:translateX(100%)}}
+    .privacy-pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:rgba(8,127,140,.08);color:var(--primary);padding:6px 9px;font-weight:800;font-size:.72rem}.listing-loading{opacity:.72;pointer-events:none}.hero-freshness{display:inline-flex;align-items:center;gap:6px;margin-top:12px;color:var(--primary);font-weight:900;font-size:.82rem}
+    @media(max-width:900px){.trust-row{grid-template-columns:repeat(2,1fr)}.return-inner{align-items:flex-start;flex-direction:column}.hero-overlay{left:26px;right:26px}}
+    @media(max-width:580px){.quick-discovery{align-items:flex-start;flex-direction:column}.quick-chips{width:100%;overflow:auto;flex-wrap:nowrap;padding-bottom:4px}.quick-chip{white-space:nowrap}.return-actions{width:100%}.return-actions .btn{flex:1}.trust-row{grid-template-columns:1fr 1fr;gap:8px}.trust-item{padding:10px}.hero-overlay{left:18px;right:18px;bottom:18px}.personal-tabs{display:grid;grid-template-columns:repeat(3,1fr)}.personal-tabs .btn{padding:10px 8px;font-size:.78rem}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn,.listing-card,.category-card,.hero-card,.quick-chip{transition:none!important}.listing-media img{transition:none!important}.skeleton::after{animation:none}.spinner{animation-duration:1.5s}}
+
+
+
+    /* Full-device responsive audit — 2026.07 */
+    html{min-width:0;min-height:100%;scroll-padding-top:calc(var(--header-height) + 14px)}
+    body{min-width:320px;min-height:100vh;min-height:100dvh;overflow-wrap:anywhere;-webkit-tap-highlight-color:transparent}
+    button,a,input,select,textarea{touch-action:manipulation}
+    input,select,textarea{max-width:100%;min-width:0}
+    .header{padding-top:env(safe-area-inset-top);height:calc(var(--header-height) + env(safe-area-inset-top))}
+    .nav{min-width:0}.brand{min-width:0}.brand>[data-site-name]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px}
+    .nav-actions{min-width:0;flex:0 0 auto}.nav-links{overscroll-behavior:contain}
+    .hero-grid>*,.search-box>*,.listings-layout>*,.detail-grid>*{min-width:0}
+    .field-wrap select,.field-wrap input{font-size:16px}
+    .listing-card,.category-card,.price-card,.job-card,.trust-item{contain:layout paint style}
+    .listing-title,.seller span,.listing-meta span,.footer p,.footer a{overflow-wrap:anywhere}
+    .modal{min-height:100vh;min-height:100dvh;overscroll-behavior:contain}
+    .modal-card{max-height:min(92vh,calc(100dvh - 24px));overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+    .modal-head{padding-top:max(20px,env(safe-area-inset-top))}
+    .modal-body{padding-bottom:max(22px,env(safe-area-inset-bottom))}
+    body.modal-open{overflow:hidden}
+    .toast{max-width:min(420px,calc(100vw - 24px));right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));overflow-wrap:anywhere}
+    .mobile-bottom{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+    .mobile-bottom button,.mobile-bottom a{min-width:0;min-height:44px}
+    @media (max-width:960px) and (min-width:781px){
+      .search-box{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .search-box .field-wrap{border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+      .search-box .btn{grid-column:1/-1;width:100%}
+      .footer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media(max-width:780px){
+      :root{--header-height:64px}
+      body{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+      .header{height:calc(var(--header-height) + env(safe-area-inset-top))}
+      .nav-links{top:calc(var(--header-height) + env(safe-area-inset-top) + 6px);left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));max-height:calc(100dvh - var(--header-height) - env(safe-area-inset-top) - 18px);overflow-y:auto;padding-bottom:max(18px,env(safe-area-inset-bottom))}
+      .nav-actions{gap:6px}.nav-actions .btn{padding-inline:12px}.brand>[data-site-name]{max-width:clamp(92px,32vw,180px)}
+      .hero{padding-top:38px}.hero h1{overflow-wrap:normal;word-break:normal}
+      .search-box{padding:9px;border-radius:17px}.field-wrap{min-height:48px}
+      .section-title,.listing-toolbar{width:100%}.listing-toolbar>*{min-width:0}
+      .filters.open{max-height:none;overflow:visible}
+      .modal{place-items:end center;padding:0}
+      .modal-card{width:100%;max-width:none;max-height:calc(100dvh - env(safe-area-inset-top) - 8px);border-radius:20px 20px 0 0}
+      .modal-head{padding:16px max(16px,env(safe-area-inset-right)) 14px max(16px,env(safe-area-inset-left))}
+      .modal-body{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+      .toast{bottom:calc(76px + env(safe-area-inset-bottom))}
+      .return-strip{scroll-margin-top:calc(var(--header-height) + 10px)}
+    }
+    @media(max-width:480px){
+      .nav-actions .btn-primary{padding-inline:10px;font-size:.82rem}.icon-btn{width:44px;height:44px}
+      .hero h1{font-size:clamp(2rem,11vw,3rem)}.hero-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .detail-actions{grid-template-columns:1fr}.detail-actions .btn,.detail-actions a{width:100%}
+      .personal-tabs{grid-template-columns:1fr}.return-actions{display:grid;grid-template-columns:1fr;width:100%}
+      .trust-row{grid-template-columns:1fr}.footer-bottom{padding-bottom:8px}
+    }
+    @media(max-width:360px){.brand>[data-site-name]{display:none}.hero-stats{grid-template-columns:1fr 1fr}.category-grid{grid-template-columns:1fr 1fr}.nav-actions .btn-primary{font-size:0}.nav-actions .btn-primary::after{content:'Post';font-size:.82rem}}
+    @media(max-height:520px) and (orientation:landscape){.hero{padding:28px 0}.modal-card{max-height:100dvh;border-radius:0}.nav-links{max-height:calc(100dvh - 60px)}}
+    @media(hover:none),(pointer:coarse){.btn:hover,.listing-card:hover,.category-card:hover,.hero-card:hover,.quick-chip:hover{transform:none}.btn,.icon-btn,.fav-btn,.quick-chip{min-height:44px}}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.modal-card,.nav-links{scroll-behavior:auto}}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="#home">
+        <img class="brand-logo" data-site-logo alt="Website logo"><span class="brand-mark" data-logo-fallback><?= initialBrand.mark ?></span>
+        <span data-site-name class="hide-when-logo"><?= initialBrand.siteName ?></span>
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#categories">Categories</a>
+        <a href="#listings">All Listings</a>
+        <a href="#forYou" onclick="showPersonalCollection('saved')">Saved</a>
+        <a href="#jobs">Jobs</a>
+        <a href="#packages">Packages</a>
+        <a href="#safety">Safety</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode">☾</button>
+        <a class="btn btn-soft" id="memberLoginTop" target="_top" href="<?!= (webAppUrl || '') + '?page=member' ?>">Member Login</a>
+        <a class="btn btn-outline" id="memberSignupTop" target="_top" href="<?!= (webAppUrl || '') + '?page=member&signup=1' ?>">Sign Up</a>
+        <a class="btn btn-outline" id="adminLoginTop" target="_top" href="<?!= (webAppUrl || '') + '?page=admin' ?>">Admin</a>
+        <button class="btn btn-primary post-desktop" data-post-button onclick="openPostModal()">＋ Post Ad</button>
+        <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Open navigation menu" aria-controls="navLinks" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div id="systemNotice" class="system-notice" hidden></div>
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Maldives all-in-one classifieds</div>
+          <h1 id="heroHeading">Find it. Sell it. <span>Make it happen.</span></h1>
+          <p class="hero-copy" id="heroDescription">Jobs, properties, vehicles, rentals, electronics, professional services and business opportunities—all in one trusted marketplace.</p>
+          <div class="search-box">
+            <div class="field-wrap"><span>⌕</span><input id="heroKeyword" type="search" placeholder="What are you looking for?"></div>
+            <div class="field-wrap"><span>▦</span><select id="heroCategory"><option value="">All categories</option></select></div>
+            <div class="field-wrap"><span>⌖</span><select id="heroLocation"><option value="">All Maldives</option><option>Male'</option><option>Hulhumale'</option><option>Addu City</option><option>Fuvahmulah</option><option>Resorts</option></select></div>
+            <button class="btn btn-primary" onclick="heroSearch()">Search</button>
+          </div>
+          <div class="quick-discovery"><strong>Popular now</strong><div class="quick-chips" id="quickChips"></div><button class="resume-search" id="resumeSearchInline" type="button" onclick="resumeLastSearch()" hidden>↻ Resume last search</button></div>
+          <div class="hero-freshness" id="heroFreshness" hidden>● Fresh listings are available</div>
+          <div class="hero-stats">
+            <div class="stat"><strong id="listingStat">0</strong><span>Published listings</span></div>
+            <div class="stat"><strong id="verifiedStat">0</strong><span>Verified sellers</span></div>
+            <div class="stat"><strong id="categoryStat">0</strong><span>Main categories</span></div>
+          </div>
+          <div class="trust-row" aria-label="Marketplace trust features">
+            <div class="trust-item"><span class="trust-icon">✓</span><span><b>Admin-approved ads</b><small>Published after review</small></span></div>
+            <div class="trust-item"><span class="trust-icon">♡</span><span><b>Private favourites</b><small>Saved on this device</small></span></div>
+            <div class="trust-item"><span class="trust-icon">⌕</span><span><b>Fast discovery</b><small>Search and filter quickly</small></span></div>
+            <div class="trust-item"><span class="trust-icon">⚑</span><span><b>Safety reporting</b><small>Report suspicious ads</small></span></div>
+          </div>
+        </div>
+        <button class="hero-card" id="heroSpotlight" type="button" onclick="openHeroSpotlight()" aria-label="Open featured advertisement">
+          <img id="heroVisualImage" src="" alt="Featured marketplace advertisement" onerror="this.onerror=null;this.src=DEFAULT_IMAGE">
+          <div class="hero-badge">✓ Real marketplace content<small>Fresh approved advertisements</small></div>
+          <div class="hero-overlay"><small id="heroVisualLabel">Featured today</small><strong id="heroVisualTitle">Explore the latest marketplace opportunities</strong><span id="heroVisualPrice">Browse approved listings</span></div>
+        </button>
+      </div>
+    </section>
+
+    <section class="return-strip" id="returnStrip" hidden>
+      <div class="container return-inner">
+        <div class="return-copy"><strong id="returnGreeting">Welcome back</strong><span id="returnMessage">Continue discovering useful listings.</span></div>
+        <div class="return-actions"><button class="btn btn-primary" id="resumeSearchButton" type="button" onclick="resumeLastSearch()">Resume search</button><button class="btn btn-outline" type="button" onclick="showPersonalCollection('saved')">Saved <span id="savedCount">0</span></button></div>
+      </div>
+    </section>
+
+    <section class="section" id="categories">
+      <div class="container">
+        <div class="section-title">
+          <div><div class="eyebrow">Browse easily</div><h2>Popular categories</h2><p>Choose a category to instantly filter matching advertisements.</p></div>
+          <button class="btn btn-soft" onclick="resetFilters()">View all categories</button>
+        </div>
+        <div class="category-grid" id="categoryGrid"></div>
+      </div>
+    </section>
+
+    <section class="section" id="forYou" hidden>
+      <div class="container">
+        <div class="section-title">
+          <div><div class="eyebrow">Useful to you</div><h2 id="personalTitle">Continue browsing</h2><p id="personalDescription">Quickly return to listings you viewed or saved.</p></div>
+          <div class="personal-tabs" role="tablist" aria-label="Personal marketplace views"><button class="btn btn-outline active" type="button" data-personal-mode="recent">Recently viewed</button><button class="btn btn-outline" type="button" data-personal-mode="saved">Saved</button><button class="btn btn-outline" type="button" data-personal-mode="suggested">Suggested</button></div>
+        </div>
+        <div class="listing-grid" id="personalizedGrid"></div>
+        <div class="personal-note"><span class="privacy-pill">🔒 Private by design</span><span>Your viewed categories, recent items and favourites stay in this browser. They are not added to your account.</span><button class="resume-search" type="button" onclick="clearBrowsingHistory()">Clear browsing history</button></div>
+      </div>
+    </section>
+
+    <section class="section" id="listings" style="padding-top:20px">
+      <div class="container">
+        <div class="section-title">
+          <div><div class="eyebrow">Fresh opportunities</div><h2>Latest advertisements</h2><p>Search and filter approved listings from across Maldives.</p></div>
+          <button class="btn btn-outline filter-mobile" style="display:none" onclick="toggleFilters()">☷ Filters</button>
+        </div>
+        <div class="listings-layout">
+          <aside class="filters" id="filtersPanel">
+            <h3>Filter listings</h3>
+            <div class="form-group"><label>Keyword</label><input class="input" id="filterKeyword" placeholder="Search title or seller"></div>
+            <div class="form-group"><label>Category</label><select class="input" id="filterCategory"><option value="">All Categories</option></select></div>
+            <div class="form-group"><label>Location</label><select class="input" id="filterLocation"><option value="">All Locations</option><option>Male'</option><option>Hulhumale'</option><option>Addu City</option><option>Fuvahmulah</option><option>Resorts</option></select></div>
+            <div class="form-group"><label>Maximum Price (MVR)</label><input class="input" type="number" id="filterPrice" placeholder="No limit"></div>
+            <div class="form-group"><label>Condition</label><select class="input" id="filterCondition"><option value="">Any Condition</option><option>Brand New</option><option>Like New</option><option>Used</option><option>Not Applicable</option></select></div>
+            <button class="btn btn-primary" style="width:100%" onclick="applyFilters()">Apply Filters</button>
+            <button class="btn btn-soft" style="width:100%;margin-top:8px" onclick="resetFilters()">Reset</button>
+          </aside>
+          <div>
+            <div class="listing-toolbar">
+              <strong id="resultCount">0 advertisements found</strong>
+              <select class="input" id="sortSelect" style="width:auto" onchange="applyFilters()">
+                <option value="newest">Newest first</option>
+                <option value="priceLow">Lowest price</option>
+                <option value="priceHigh">Highest price</option>
+              </select>
+            </div>
+            <div class="listing-grid" id="listingGrid"></div><div class="listing-pager" id="listingPager"><button class="btn btn-outline" id="loadMoreListings" type="button" onclick="loadMoreListings()">Load More</button><small id="listingPageInfo"></small></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="jobs">
+      <div class="container jobs-panel">
+        <div class="section-title">
+          <div><div class="eyebrow" style="color:#d8fff9">Build your career</div><h2>Latest jobs in Maldives</h2><p>Discover full-time, part-time, resort and remote opportunities.</p></div>
+          <button class="btn" style="background:#fff;color:#087f8c" onclick="selectCategory('Jobs')">View all jobs</button>
+        </div>
+        <div class="jobs-list" id="jobsList"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-title"><div><div class="eyebrow">Simple process</div><h2>How it works</h2><p>Start posting and connecting in four easy steps.</p></div></div>
+        <div class="how-grid">
+          <article class="step"><div class="step-number">1</div><h3>Create account</h3><p>Register as an individual, business, employer, property agent or service provider.</p></article>
+          <article class="step"><div class="step-number">2</div><h3>Choose package</h3><p>Select a monthly plan that matches your posting requirements.</p></article>
+          <article class="step"><div class="step-number">3</div><h3>Submit advertisement</h3><p>Add details, images, contact methods and complete payment.</p></article>
+          <article class="step"><div class="step-number">4</div><h3>Get published</h3><p>After admin approval, your listing becomes visible to marketplace visitors.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="packages" style="background:color-mix(in srgb,var(--surface) 70%,var(--bg))">
+      <div class="container">
+        <div class="section-title"><div><div class="eyebrow">Monthly plans</div><h2>Choose your package</h2><p>Packages published by the administrator appear here.</p></div></div>
+        <div class="pricing-grid" id="pricingGrid"></div>
+      </div>
+    </section>
+
+    <section class="section" id="safety">
+      <div class="container safety">
+        <div><h2>Stay safe while buying and selling</h2><p>Meet in a safe public place, verify the item before paying, never share OTP codes, and report suspicious advertisements immediately.</p></div>
+        <a class="btn btn-primary" id="safetyContact" href="mailto:hashansoysa92@gmail.com?subject=Marketplace%20Safety%20Concern">Report a Safety Concern</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div><a class="brand" href="#home" style="color:#fff"><img class="brand-logo" data-site-logo alt="Website logo"><span class="brand-mark" data-logo-fallback><?= initialBrand.mark ?></span><span data-site-name class="hide-when-logo"><?= initialBrand.siteName ?></span></a><p>A Maldives all-in-one classifieds marketplace for jobs, products, rentals, properties, vehicles and professional services.</p></div>
+        <div><h3>Marketplace</h3><a href="#listings">All Listings</a><a href="#jobs">Jobs</a><a href="#categories">Categories</a><a href="#packages">Packages</a></div>
+        <div><h3>Support</h3><a href="mailto:hashansoysa92@gmail.com">Contact Us</a><a href="#safety">Safety Tips</a><a href="#">Scam Awareness</a><a href="#">Report an Ad</a></div>
+        <div><h3>Company</h3><a href="#">About Us</a><a href="#">Terms & Conditions</a><a href="#">Privacy Policy</a><a href="#">Posting Policy</a><a id="memberLoginFooter" target="_top" href="<?!= (webAppUrl || '') + '?page=member' ?>">Member Login / Sign Up</a><a id="adminLoginFooter" target="_top" href="<?!= (webAppUrl || '') + '?page=admin' ?>">Administrator Login</a></div>
+      </div>
+      <div class="footer-bottom"><span>© <span id="year"></span> <span data-site-name><?= initialBrand.siteName ?></span>. All rights reserved.</span><span id="footerSupport">Support: +960 9282569</span></div>
+    </div>
+  </footer>
+
+  <nav class="mobile-bottom">
+    <a href="#home"><span>⌂</span>Home</a>
+    <a href="#categories"><span>▦</span>Categories</a>
+    <button data-post-button onclick="openPostModal()"><span style="color:var(--primary);font-size:1.6rem">⊕</span>Post</button>
+    <a id="memberLoginMobile" target="_top" href="<?!= (webAppUrl || '') + '?page=member' ?>"><span>◎</span>Account</a>
+    <a id="adminLoginMobile" target="_top" href="<?!= (webAppUrl || '') + '?page=admin' ?>"><span>♛</span>Admin</a>
+  </nav>
+
+
+  <div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="detailModalTitle" onclick="outsideClose(event, 'detailModal')">
+    <div class="modal-card">
+      <div class="modal-head"><h2 id="detailModalTitle">Advertisement Details</h2><button class="close-btn" type="button" aria-label="Close advertisement details" onclick="closeModal('detailModal')">×</button></div>
+      <div class="modal-body" id="detailContent"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const WEB_APP_URL = <?!= JSON.stringify(webAppUrl || '') ?>;
+    const HOME_URL = WEB_APP_URL ? WEB_APP_URL + '?page=home' : '?page=home';
+    const DEFAULT_IMAGE = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="900" height="620" viewBox="0 0 900 620">
+        <defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#087f8c"/><stop offset="1" stop-color="#13b8a6"/></linearGradient></defs>
+        <rect width="900" height="620" fill="#eef7f8"/><rect x="90" y="80" width="720" height="460" rx="36" fill="url(#g)" opacity=".12"/>
+        <circle cx="450" cy="270" r="92" fill="url(#g)" opacity=".82"/><path d="M407 270h86M450 227v86" stroke="#fff" stroke-width="18" stroke-linecap="round"/>
+        <text x="450" y="425" text-anchor="middle" font-family="Arial,sans-serif" font-size="34" font-weight="700" fill="#102a43">Advertisement Image</text>
+      </svg>`);
+
+    const INITIAL_SITE_NAME = document.documentElement.dataset.initialSiteName || 'Website';
+    const INITIAL_SITE_MARK = document.documentElement.dataset.initialSiteMark || 'W';
+    let SETTINGS = { siteName: INITIAL_SITE_NAME, companyEmail: 'hashansoysa92@gmail.com', companyWhatsApp: '9609282569', companyPhone: '+960 9282569', defaultCurrency: 'MVR', packages: [] };
+    let categories = [];
+    let listings = [];
+    let filteredListings = [];
+    let publicStats = { publishedListings:0, verifiedSellers:0 };
+    let jobListings = [];
+    let availableLocations = [];
+    let publicPager = { page:1, pageSize:24, total:0, totalPages:1, hasMore:false, busy:false };
+    let publicBootstrapBusy = false;
+    let lastPublicLoadAt = 0;
+    let heroSpotlightId = 0;
+    let personalMode = 'recent';
+    let personalItems = [];
+    let previousVisitAt = null;
+    const listingCache = new Map();
+    const deepLinkedListingId = Math.max(0, Number(new URLSearchParams(location.search).get('listing') || 0));
+    const visitStartedAt = new Date().toISOString();
+    const memoryStorage={};
+    function storageGet(key){try{return window.localStorage.getItem(key)||memoryStorage[key]||''}catch(e){return memoryStorage[key]||''}}
+    function storageSet(key,value){memoryStorage[key]=String(value||'');try{window.localStorage.setItem(key,String(value||''));return true}catch(e){return false}}
+    function storageRemove(key){delete memoryStorage[key];try{window.localStorage.removeItem(key)}catch(e){}}
+    const favouriteIds = new Set(readStoredArray('mvmarket-favourites').map(Number).filter(Number.isFinite));
+    let recentViewIds = readStoredArray('mvmarket-recent-views').map(Number).filter(Number.isFinite).slice(0,12);
+    let interestProfile = readStoredObject('mvmarket-interest-profile');
+    let lastSearchState = readStoredObject('mvmarket-last-search');
+    previousVisitAt = storageSafeDate('mvmarket-last-visit-at');
+    function readStoredArray(key) { try { const value = JSON.parse(storageGet(key) || '[]'); return Array.isArray(value) ? value : []; } catch (e) { storageRemove(key); return []; } }
+    function readStoredObject(key) { try { const value = JSON.parse(storageGet(key) || '{}'); return value && typeof value === 'object' && !Array.isArray(value) ? value : {}; } catch (e) { storageRemove(key); return {}; } }
+    function storageSafeDate(key){const raw=storageGet(key);const date=raw?new Date(raw):null;return date&&!Number.isNaN(date.getTime())?date:null;}
+
+    function init() {
+      document.getElementById('year').textContent = new Date().getFullYear();
+      document.getElementById('heroVisualImage').src = DEFAULT_IMAGE;
+      setAdminLinks(); bindInternalNavigation(); bindDiscoveryEvents(); populateCategories(); populateSelects(); renderListings(); renderJobs(); renderPricing(); bindLiveFilters();
+      if (storageGet('mvmarket-theme') === 'dark') document.body.classList.add('dark');
+      updateThemeIcon(); renderReturnExperience(); loadWebsiteBrand(); loadPublicData();
+      window.addEventListener('focus', refreshPublicIfStale);
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshPublicIfStale(); });
+      window.addEventListener('pagehide', saveVisitTimestamp, {once:true});
+      setTimeout(saveVisitTimestamp, 15000);
+    }
+    function saveVisitTimestamp(){storageSet('mvmarket-last-visit-at',visitStartedAt);}
+    function bindDiscoveryEvents(){
+      document.getElementById('quickChips')?.addEventListener('click',event=>{const button=event.target.closest('[data-category]');if(button)selectCategory(button.dataset.category||'');});
+      document.getElementById('categoryGrid')?.addEventListener('click',event=>{const button=event.target.closest('[data-category]');if(button)selectCategory(button.dataset.category||'');});
+      document.getElementById('pricingGrid')?.addEventListener('click',event=>{const button=event.target.closest('[data-package]');if(button)choosePackage(button.dataset.package||'');});
+      document.querySelectorAll('[data-personal-mode]').forEach(button=>button.addEventListener('click',()=>showPersonalCollection(button.dataset.personalMode||'recent')));
+    }
+
+    function loadWebsiteBrand() {
+      if (typeof google === 'undefined' || !google.script || !google.script.run) return;
+      google.script.run.withSuccessHandler(applyWebsiteBrand).withFailureHandler(() => {}).getWebsiteBrand();
+    }
+    function applyWebsiteBrand(brand) {
+      brand = brand || {};
+      SETTINGS = { ...SETTINGS, siteName:brand.siteName || SETTINGS.siteName };
+      if (brand.primaryColor) document.documentElement.style.setProperty('--primary', brand.primaryColor);
+      if (brand.secondaryColor) document.documentElement.style.setProperty('--secondary', brand.secondaryColor);
+      if (brand.accentColor) document.documentElement.style.setProperty('--accent', brand.accentColor);
+      const activeName = brand.siteName || SETTINGS.siteName || INITIAL_SITE_NAME;
+      const activeMark = brand.mark || makeBrandMark(activeName);
+      document.querySelectorAll('body [data-site-name]').forEach(el => el.textContent = activeName);
+      document.querySelectorAll('body [data-logo-fallback]').forEach(el => el.textContent = activeMark);
+      const logo = brand.logo || {}; window._currentWebsiteLogo = logo;
+      document.querySelectorAll('.brand').forEach(el => el.classList.toggle('logo-active', !!(logo.exists && logo.dataUrl)));
+      document.querySelectorAll('body [data-site-logo]').forEach(img => applySafeBrandLogo(img, logo, activeName));
+      if (logo.exists && logo.dataUrl) setFavicon(logo.dataUrl);
+      document.title = `${activeName} | Maldives Classifieds`;
+      updateShareMeta(activeName, brand.description || SETTINGS.homeDescription || document.querySelector('meta[name="description"]')?.content || '');
+    }
+    function makeBrandMark(name) { const words=String(name||'').trim().split(/\s+/).filter(Boolean); return (words.slice(0,2).map(x=>x[0]).join('').toUpperCase().slice(0,2) || INITIAL_SITE_MARK); }
+    function applySafeBrandLogo(img, logo, activeName) {
+      const fallback = img.closest('.brand')?.querySelector('[data-logo-fallback]');
+      img.alt = activeName + ' logo';
+      img.style.display = 'none';
+      if (fallback) fallback.style.display = 'grid';
+      img.onload = () => { img.style.display = 'block'; if (fallback) fallback.style.display = 'none'; };
+      img.onerror = () => { img.style.display = 'none'; if (fallback) fallback.style.display = 'grid'; };
+      if (logo && logo.exists && logo.dataUrl) img.src = logo.dataUrl;
+      else img.removeAttribute('src');
+      if (img.complete && img.naturalWidth > 0) img.onload();
+    }
+    function updateShareMeta(name) {
+      // The visible document title stays synchronized after an in-page settings refresh.
+      document.title = `${name} | Maldives Classifieds`;
+    }
+    function setFavicon(dataUrl) { let link=document.querySelector('link[rel="icon"]'); if(!link){link=document.createElement('link');link.rel='icon';document.head.appendChild(link)} link.href=dataUrl; }
+
+    function setAdminLinks() {
+      const adminUrl = WEB_APP_URL ? WEB_APP_URL + '?page=admin' : '?page=admin';
+      const memberUrl = WEB_APP_URL ? WEB_APP_URL + '?page=member' : '?page=member';
+      ['adminLoginTop','adminLoginFooter','adminLoginMobile'].forEach(id => {
+        const link = document.getElementById(id);
+        if (link) { link.href = adminUrl; link.target = '_top'; link.removeAttribute('rel'); }
+      });
+      ['memberLoginTop','memberLoginFooter','memberLoginMobile'].forEach(id => {
+        const link = document.getElementById(id);
+        if (link) { link.href = memberUrl; link.target = '_top'; link.removeAttribute('rel'); }
+      });
+      const signup = document.getElementById('memberSignupTop');
+      if (signup) { signup.href = memberUrl + '&signup=1'; signup.target = '_top'; signup.removeAttribute('rel'); }
+    }
+    function bindInternalNavigation() {
+      document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.target = '_top';
+        link.addEventListener('click', event => {
+          const selector = link.getAttribute('href');
+          if (!selector || selector === '#') {
+            event.preventDefault();
+            showToast('This page will be available soon.');
+            return;
+          }
+          const section = document.querySelector(selector);
+          if (!section) return;
+          event.preventDefault();
+          section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          document.getElementById('navLinks')?.classList.remove('open');
+        });
+      });
+    }
+    function showSystemNotice(message, isError = false) { const box = document.getElementById('systemNotice'); box.textContent = message; box.hidden = !message; box.classList.toggle('error', isError); }
+    function populateCategories() {
+      const grid = document.getElementById('categoryGrid');
+      grid.innerHTML = categories.length ? categories.map(cat => `<button class="category-card" type="button" data-category="${escapeHtml(cat.name)}"><div class="category-icon">${escapeHtml(cat.icon || '◉')}</div><h3>${escapeHtml(cat.name)}</h3><span>${Number(cat.count || 0)} listings</span></button>`).join('') : '<div class="empty"><h3>No active categories</h3><p>Categories can be created and enabled from the Admin Dashboard.</p></div>';
+      renderQuickChips();
+    }
+    function renderQuickChips(){
+      const chips=document.getElementById('quickChips');if(!chips)return;
+      const popular=[...categories].sort((a,b)=>Number(b.count||0)-Number(a.count||0)||String(a.name||'').localeCompare(String(b.name||''))).slice(0,5);
+      chips.innerHTML=popular.map(cat=>`<button class="quick-chip" type="button" data-category="${escapeHtml(cat.name)}">${escapeHtml(cat.icon||'•')} ${escapeHtml(cat.name)}</button>`).join('');
+    }
+    function populateSelects() {
+      const options = categories.map(c => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join('');
+      ['heroCategory','filterCategory','postCategory'].forEach(id => { const el = document.getElementById(id); if (!el) return; const current=el.value; const first = id === 'postCategory' ? '<option value="">Choose Category</option>' : id === 'heroCategory' ? '<option value="">All categories</option>' : '<option value="">All Categories</option>'; el.innerHTML = first + options; if ([...el.options].some(o=>o.value===current)) el.value=current; });
+      const defaults=["Male'","Hulhumale'",'Addu City','Fuvahmulah','Resorts'];
+      const locations=[...new Set(defaults.concat(availableLocations,listings.map(x=>String(x.location||'').trim()).filter(Boolean)))].sort((a,b)=>a.localeCompare(b));
+      ['heroLocation','filterLocation'].forEach(id=>{const el=document.getElementById(id);if(!el)return;const current=el.value;const first=id==='heroLocation'?'<option value="">All Maldives</option>':'<option value="">All Locations</option>';el.innerHTML=first+locations.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join('');if([...el.options].some(o=>o.value===current))el.value=current;});
+    }
+    function loadPublicData() {
+      if (publicBootstrapBusy) return;
+      if (typeof google === 'undefined' || !google.script || !google.script.run) { showSystemNotice('This production website must be opened from the deployed Google Apps Script Web App URL.', true); return; }
+      publicBootstrapBusy = true;
+      document.getElementById('listingGrid').classList.add('listing-loading');
+      google.script.run
+        .withSuccessHandler(data => { publicBootstrapBusy=false; lastPublicLoadAt=Date.now(); document.getElementById('listingGrid').classList.remove('listing-loading'); applyPublicBootstrap(data); })
+        .withFailureHandler(err => { publicBootstrapBusy=false; document.getElementById('listingGrid').classList.remove('listing-loading'); showSystemNotice(err && err.message ? err.message : 'Website data could not be loaded.', true); })
+        .getPublicBootstrap();
+    }
+    function applyPublicBootstrap(data) {
+      if (!data || !data.initialized) { showSystemNotice('System setup is incomplete. The owner must run setupSystem() from the Apps Script editor.', true); return; }
+      showSystemNotice(''); const s = data.settings || {};
+      SETTINGS = { ...SETTINGS, ...s, packages:Array.isArray(data.packages) ? data.packages : [] };
+      categories = Array.isArray(data.categories) ? data.categories : [];
+      listings = Array.isArray(data.listings) ? data.listings : [];
+      filteredListings = [...listings];
+      publicStats = { ...publicStats, ...(data.stats || {}) };
+      jobListings = Array.isArray(data.jobs) ? data.jobs : [];
+      availableLocations = Array.isArray(data.locations) ? data.locations : [];
+      publicPager = { ...publicPager, ...(data.listingPage || {}), busy:false };
+      if (s.primaryColor) document.documentElement.style.setProperty('--primary', s.primaryColor); if (s.secondaryColor) document.documentElement.style.setProperty('--secondary', s.secondaryColor); if (s.accentColor) document.documentElement.style.setProperty('--accent', s.accentColor);
+      applyWebsiteBrand({ siteName:SETTINGS.siteName, primaryColor:s.primaryColor, secondaryColor:s.secondaryColor, accentColor:s.accentColor, logo:window._currentWebsiteLogo || {} });
+      if (s.homeHeading) document.getElementById('heroHeading').textContent = s.homeHeading; if (s.homeDescription) document.getElementById('heroDescription').textContent = s.homeDescription; if (s.companyPhone) document.getElementById('footerSupport').textContent = `Support: ${s.companyPhone}`; if (s.companyEmail) document.getElementById('safetyContact').href = `mailto:${encodeURIComponent(s.companyEmail)}?subject=${encodeURIComponent('Marketplace Safety Concern')}`;
+      document.querySelectorAll('[data-post-button]').forEach(button => { button.disabled = !asBool(SETTINGS.postingEnabled); button.title = asBool(SETTINGS.postingEnabled) ? '' : 'Advertisement posting is disabled'; });
+      const registrationOpen=asBool(SETTINGS.registrationEnabled);document.querySelectorAll('#memberSignupTop').forEach(link=>{link.style.display=registrationOpen?'inline-flex':'none';});
+      if (asBool(SETTINGS.maintenanceMode)) showSystemNotice('The website is currently in maintenance mode.', true);
+      cacheListings(listings); cacheListings(jobListings);
+      updateStats(); populateCategories(); populateSelects(); renderListings(); renderJobs(); renderPricing(); updateHeroSpotlight(); renderReturnExperience(); hydratePersonalCollection(personalMode); openDeepLinkedListing();
+      const refreshSeconds = Math.max(120, Number(s.autoRefreshSeconds || 120)); clearInterval(window.publicRefreshTimer); window.publicRefreshTimer = setInterval(refreshPublicIfStale, refreshSeconds * 1000);
+    }
+    function updateStats() {
+      document.getElementById('listingStat').textContent = Number(publicStats.publishedListings || publicPager.total || listings.length).toLocaleString();
+      const verified = Number(publicStats.verifiedSellers || 0) || new Set(listings.filter(x => x.verified).map(x => String(x.seller || '').trim()).filter(Boolean)).size;
+      document.getElementById('verifiedStat').textContent = verified.toLocaleString(); document.getElementById('categoryStat').textContent = categories.length.toLocaleString();
+      const fresh=document.getElementById('heroFreshness');const newest=publicStats.latestPublishedAt?new Date(publicStats.latestPublishedAt):null;
+      const hasSinceVisit=previousVisitAt&&newest&&!Number.isNaN(newest.getTime())&&newest>previousVisitAt;
+      const weekly=Number(publicStats.newLast7Days||0);fresh.hidden=!(hasSinceVisit||weekly>0);fresh.textContent=hasSinceVisit?'● New listings have been published since your last visit':`● ${weekly.toLocaleString()} new listing${weekly===1?'':'s'} added in the last 7 days`;
+    }
+    function listingCardHtml(item){
+      const id=Number(item.id);const viewed=recentViewIds.includes(id);const isNew=isListingNew(item);
+      return `<article class="listing-card" role="button" tabindex="0" data-listing-id="${id}" onclick="openDetails(${id})" onkeydown="listingCardKey(event,${id})"><div class="listing-media"><img src="${safeImage(item.image)}" alt="${escapeHtml(item.title)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=DEFAULT_IMAGE">${item.featured ? '<span class="badge badge-featured">★ Featured</span>' : ''}${isNew?'<span class="new-badge">New</span>':viewed?'<span class="viewed-badge">Viewed</span>':''}<button class="fav-btn ${favouriteIds.has(id) ? 'active' : ''}" onclick="toggleFavourite(event, ${id})" aria-label="${favouriteIds.has(id)?'Remove saved advertisement':'Save advertisement'}">${favouriteIds.has(id) ? '♥' : '♡'}</button></div><div class="listing-body"><div class="listing-meta"><span>${escapeHtml(item.category)}</span><span>⌖ ${escapeHtml(item.location)}</span></div><h3 class="listing-title">${escapeHtml(item.title)}</h3><div class="listing-price">${formatPrice(item)}</div><div class="listing-footer"><div class="seller"><span class="seller-avatar">${escapeHtml(String(item.seller || '?').charAt(0))}</span><span>${escapeHtml(item.seller || 'Seller')}</span>${item.verified ? '<span class="badge badge-verified" title="Verified seller">✓</span>' : ''}</div><span>${formatDate(item.date)}</span></div></div></article>`;
+    }
+    function listingCardKey(event,id){if(event.target.closest('button,a'))return;if(event.key==='Enter'||event.key===' '){event.preventDefault();openDetails(id);}}
+    function listingSkeletons(count=6){return Array.from({length:count},()=>'<article class="skeleton-card" aria-hidden="true"><div class="skeleton skeleton-media"></div><div class="skeleton skeleton-line short"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line price"></div></article>').join('');}
+    function renderListings() {
+      const items = [...listings]; const total = Number(publicPager.total || items.length);
+      document.getElementById('resultCount').textContent = publicPager.busy&&!items.length?'Loading advertisements…':`Showing ${items.length.toLocaleString()} of ${total.toLocaleString()} advertisement${total === 1 ? '' : 's'}`;
+      document.getElementById('listingGrid').innerHTML = publicPager.busy&&!items.length ? listingSkeletons(6) : items.length ? items.map(item => listingCardHtml(item)).join('') : '<div class="empty"><h3>No published advertisements</h3><p>Try changing the filters or check again later.</p></div>';
+      const button=document.getElementById('loadMoreListings'),info=document.getElementById('listingPageInfo');
+      button.style.display=publicPager.hasMore?'inline-flex':'none'; button.disabled=!!publicPager.busy; button.textContent=publicPager.busy?'Loading…':'Load More';
+      info.textContent=total?`Page ${Number(publicPager.page||1)} of ${Number(publicPager.totalPages||1)}`:'';
+    }
+    function renderJobs() {
+      const jobs = jobListings.length ? jobListings : listings.filter(x => String(x.category || '').toLowerCase() === 'jobs').slice(0, 6);
+      document.getElementById('jobsList').innerHTML = jobs.length ? jobs.map(job => `<article class="job-card"><div class="job-head"><div class="company-logo">${escapeHtml(String(job.seller || 'J').slice(0,2).toUpperCase())}</div><div><h3>${escapeHtml(job.title)}</h3><p>${escapeHtml(job.seller || 'Employer')} · ${escapeHtml(job.location)}</p></div></div><div class="job-tags"><span class="job-tag">${escapeHtml(job.condition || 'Job')}</span><span class="job-tag">${formatPrice(job)}</span></div><button class="btn btn-soft" style="width:100%" onclick="openDetails(${Number(job.id)})">View Job</button></article>`).join('') : '<div class="empty" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.25);color:#d8fff9"><h3 style="color:#fff">No published jobs</h3><p>Approved job advertisements will appear here.</p></div>';
+    }
+    function renderPricing() {
+      const grid = document.getElementById('pricingGrid'); const plans = Array.isArray(SETTINGS.packages) ? SETTINGS.packages : [];
+      grid.innerHTML = plans.length ? plans.map(plan => `<article class="price-card ${plan.recommended ? 'featured' : ''}">${plan.recommended ? '<span class="recommended">Recommended</span>' : ''}<h3>${escapeHtml(plan.name)}</h3><p style="color:var(--muted)">${escapeHtml(plan.description || '')}</p><div class="price">${escapeHtml(SETTINGS.defaultCurrency||'MVR')} ${Number(plan.price || 0).toLocaleString()}<small>/month</small></div><ul class="features"><li>${Number(plan.posts || 0)} advertisements per month</li><li>Admin approval workflow</li><li>Listing management</li><li>Payment history</li></ul><button class="btn ${plan.recommended ? 'btn-primary' : 'btn-outline'}" style="width:100%" type="button" data-package="${escapeHtml(plan.name)}">Choose ${escapeHtml(plan.name)}</button></article>`).join('') : '<div class="empty"><h3>No active packages</h3><p>The administrator can create packages from the Admin Dashboard.</p></div>';
+    }
+    function choosePackage(name) { openMember('&package=' + encodeURIComponent(name)); }
+    function applyFilters(options={}) { if(options.remember!==false)rememberCurrentSearch(); loadPublicListings(1,false); }
+    function bindLiveFilters() { let timer; document.getElementById('filterKeyword').addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(()=>applyFilters(), 350); }); }
+    function currentSearchState(){return{keyword:document.getElementById('filterKeyword').value.trim(),category:document.getElementById('filterCategory').value,location:document.getElementById('filterLocation').value,maxPrice:document.getElementById('filterPrice').value,condition:document.getElementById('filterCondition').value,sort:document.getElementById('sortSelect').value||'newest',savedAt:new Date().toISOString()};}
+    function rememberCurrentSearch(){const state=currentSearchState();if(state.keyword||state.category||state.location||state.maxPrice||state.condition||state.sort!=='newest'){lastSearchState=state;storageSet('mvmarket-last-search',JSON.stringify(state));renderReturnExperience();}}
+    function resumeLastSearch(){
+      if(!lastSearchState||!Object.keys(lastSearchState).length){showToast('No previous search is saved on this device.');return;}
+      const values={filterKeyword:lastSearchState.keyword||'',filterCategory:lastSearchState.category||'',filterLocation:lastSearchState.location||'',filterPrice:lastSearchState.maxPrice||'',filterCondition:lastSearchState.condition||'',sortSelect:lastSearchState.sort||'newest'};
+      Object.entries(values).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.tagName==='SELECT'&&![...el.options].some(option=>option.value===String(value)))return;el.value=String(value);});
+      applyFilters({remember:false});document.getElementById('listings').scrollIntoView({behavior:'smooth'});showToast('Your previous search has been restored.');
+    }
+
+    function publicListingRequest(page) { return {page:page||1,pageSize:24,keyword:document.getElementById('filterKeyword').value.trim(),category:document.getElementById('filterCategory').value,location:document.getElementById('filterLocation').value,maxPrice:document.getElementById('filterPrice').value,condition:document.getElementById('filterCondition').value,sort:document.getElementById('sortSelect').value||'newest'}; }
+    function loadPublicListings(page,append) {
+      if (publicPager.busy || typeof google==='undefined' || !google.script || !google.script.run) return;
+      publicPager.busy=true; renderListings(); document.getElementById('listingGrid').classList.add('listing-loading');
+      google.script.run.withSuccessHandler(result=>{
+        const incoming=Array.isArray(result?.items)?result.items:[];
+        if(append){const seen=new Set(listings.map(x=>Number(x.id)));listings=listings.concat(incoming.filter(x=>!seen.has(Number(x.id))));}else listings=incoming;
+        cacheListings(incoming); filteredListings=[...listings]; publicPager={...publicPager,...(result||{}),busy:false}; document.getElementById('listingGrid').classList.remove('listing-loading'); renderListings(); renderJobs(); updateHeroSpotlight(); hydratePersonalCollection(personalMode);
+      }).withFailureHandler(error=>{publicPager.busy=false;document.getElementById('listingGrid').classList.remove('listing-loading');renderListings();showToast(error&&error.message?error.message:'Listings could not be loaded.');}).getPublicListingsPage(publicListingRequest(page));
+    }
+    function loadMoreListings(){if(publicPager.hasMore)loadPublicListings(Number(publicPager.page||1)+1,true)}
+    function hasActiveListingFilters(){return !!(document.getElementById('filterKeyword').value||document.getElementById('filterCategory').value||document.getElementById('filterLocation').value||document.getElementById('filterPrice').value||document.getElementById('filterCondition').value||document.getElementById('sortSelect').value!=='newest')}
+    function refreshPublicIfStale(){if(document.hidden||Date.now()-lastPublicLoadAt<60000||publicPager.busy)return;if(!hasActiveListingFilters()&&Number(publicPager.page||1)===1)loadPublicData()}
+
+    function resetFilters() { ['filterKeyword','filterPrice'].forEach(id => document.getElementById(id).value = ''); ['filterCategory','filterLocation','filterCondition'].forEach(id => document.getElementById(id).value = ''); document.getElementById('sortSelect').value='newest'; loadPublicListings(1,false); document.getElementById('listings').scrollIntoView({ behavior:'smooth' }); }
+    function selectCategory(name) { const filter=document.getElementById('filterCategory');if([...filter.options].some(option=>option.value===name))filter.value=name; applyFilters(); document.getElementById('listings').scrollIntoView({ behavior: 'smooth' }); }
+    function heroSearch() { document.getElementById('filterKeyword').value = document.getElementById('heroKeyword').value; document.getElementById('filterCategory').value = document.getElementById('heroCategory').value; document.getElementById('filterLocation').value = document.getElementById('heroLocation').value; applyFilters(); document.getElementById('listings').scrollIntoView({ behavior: 'smooth' }); }
+    function toggleFavourite(event, id) { event.stopPropagation();id=Number(id); if (favouriteIds.has(id)) favouriteIds.delete(id); else favouriteIds.add(id); storageSet('mvmarket-favourites', JSON.stringify([...favouriteIds])); renderListings(); renderReturnExperience(); hydratePersonalCollection(personalMode); showToast(favouriteIds.has(id) ? 'Advertisement saved on this device.' : 'Advertisement removed from saved items.'); }
+    function cacheListings(items){(Array.isArray(items)?items:[]).forEach(item=>{const id=Number(item&&item.id);if(Number.isFinite(id)&&id>0)listingCache.set(id,item);});}
+    function getListingById(id){return listingCache.get(Number(id))||listings.find(x=>Number(x.id)===Number(id))||personalItems.find(x=>Number(x.id)===Number(id));}
+    function recordListingView(item){const id=Number(item.id);recentViewIds=[id,...recentViewIds.filter(x=>x!==id)].slice(0,12);storageSet('mvmarket-recent-views',JSON.stringify(recentViewIds));const category=String(item.category||'').trim(),locationName=String(item.location||'').trim();interestProfile.categories=interestProfile.categories||{};interestProfile.locations=interestProfile.locations||{};if(category)interestProfile.categories[category]=Math.min(20,Number(interestProfile.categories[category]||0)+1);if(locationName)interestProfile.locations[locationName]=Math.min(20,Number(interestProfile.locations[locationName]||0)+1);storageSet('mvmarket-interest-profile',JSON.stringify(interestProfile));renderReturnExperience();}
+    function openDetails(id) {
+      const item = getListingById(id); if (!item) {fetchListingsByIds([id],items=>{if(items[0])openDetails(items[0].id);else showToast('This advertisement is no longer available.');});return;} recordListingView(item); const reference = item.reference || `AD-${new Date().getFullYear()}-${String(item.id).padStart(6,'0')}`;
+      document.getElementById('detailContent').innerHTML = `<div class="detail-grid"><img class="detail-image" src="${safeImage(item.image)}" alt="${escapeHtml(item.title)}" onerror="this.onerror=null;this.src=DEFAULT_IMAGE"><div><div class="listing-meta"><span>${escapeHtml(item.category)} · ${escapeHtml(item.condition || 'Not Applicable')}</span><span>${formatDate(item.date)}</span></div><h2 style="color:var(--navy);line-height:1.2">${escapeHtml(item.title)}</h2><div class="listing-price">${formatPrice(item)}</div><p style="color:var(--muted)">${escapeHtml(item.description || '')}</p><p><strong>Location:</strong> ${escapeHtml(item.location || '')}</p><p><strong>Seller:</strong> ${escapeHtml(item.seller || 'Seller')} ${item.verified ? '<span class="badge badge-verified">✓ Verified</span>' : ''}</p><p><strong>Reference:</strong> ${escapeHtml(reference)}</p><div class="detail-actions"><a class="btn btn-primary" href="https://wa.me/${String(item.phone || '').replace(/\D/g,'')}?text=${encodeURIComponent('Hello, I am interested in: ' + item.title + ' (' + reference + ')')}" target="_blank" rel="noopener">WhatsApp</a><a class="btn btn-outline" href="tel:${escapeHtml(item.phone || '')}">Call Seller</a><button class="btn btn-soft" onclick="shareListing(${Number(item.id)})">Share</button><button class="btn btn-soft" onclick="reportListing(${Number(item.id)})">Report</button></div></div></div>`; openModal('detailModal'); hydratePersonalCollection(personalMode);
+    }
+    async function shareListing(id) { const item = getListingById(id); if (!item) return; const base=WEB_APP_URL?WEB_APP_URL+'?page=home':location.href.split('?')[0]+'?page=home';const url=base+'&listing='+encodeURIComponent(Number(item.id)); const data = { title: item.title, text: `${item.title} - ${formatPrice(item)}`, url:url }; try { if (navigator.share) await navigator.share(data); else { await navigator.clipboard.writeText(data.url); showToast('Direct listing link copied.'); } } catch (e) {} }
+    function isListingNew(item){const raw=item.createdAt||item.date;const date=raw?new Date(raw):null;const age=date?Date.now()-date.getTime():NaN;return !!(date&&!Number.isNaN(age)&&age>=-300000&&age<=3*86400000);}
+    function updateHeroSpotlight(){const item=listings.find(x=>x.featured)||listings[0]||null;heroSpotlightId=item?Number(item.id):0;const image=document.getElementById('heroVisualImage');image.src=item?safeImageUrl(item.image):DEFAULT_IMAGE;image.alt=item?item.title:'Marketplace advertisements';document.getElementById('heroVisualLabel').textContent=item?(item.featured?'Featured advertisement':'Latest approved advertisement'):'Explore the marketplace';document.getElementById('heroVisualTitle').textContent=item?item.title:'Explore the latest marketplace opportunities';document.getElementById('heroVisualPrice').textContent=item?formatPrice(item):'Browse approved listings';document.getElementById('heroSpotlight').disabled=!item;}
+    function openHeroSpotlight(){if(heroSpotlightId)openDetails(heroSpotlightId);else document.getElementById('listings').scrollIntoView({behavior:'smooth'});}
+    function renderReturnExperience(){const hasSearch=lastSearchState&&Object.keys(lastSearchState).some(key=>!['savedAt','sort'].includes(key)&&lastSearchState[key]);const hasHistory=recentViewIds.length>0||favouriteIds.size>0;if(!hasHistory&&listings.length&&personalMode==='recent')personalMode='suggested';document.querySelectorAll('[data-personal-mode]').forEach(button=>button.classList.toggle('active',button.dataset.personalMode===personalMode));const strip=document.getElementById('returnStrip');strip.hidden=!(hasSearch||hasHistory||previousVisitAt);document.getElementById('savedCount').textContent=favouriteIds.size.toLocaleString();document.getElementById('resumeSearchButton').hidden=!hasSearch;document.getElementById('resumeSearchInline').hidden=!hasSearch;let message='Discover fresh, approved advertisements across Maldives.';if(hasSearch)message='Your last search is ready to continue.';else if(favouriteIds.size)message=`You have ${favouriteIds.size} saved advertisement${favouriteIds.size===1?'':'s'} on this device.`;else if(recentViewIds.length)message='Recently viewed advertisements are ready to reopen.';document.getElementById('returnGreeting').textContent=previousVisitAt?'Welcome back':'Your marketplace, your way';document.getElementById('returnMessage').textContent=message;const personal=document.getElementById('forYou');personal.hidden=!(hasHistory||listings.length>0);}
+    function showPersonalCollection(mode){personalMode=['recent','saved','suggested'].includes(mode)?mode:'recent';document.querySelectorAll('[data-personal-mode]').forEach(button=>button.classList.toggle('active',button.dataset.personalMode===personalMode));document.getElementById('forYou').hidden=false;hydratePersonalCollection(personalMode);setTimeout(()=>document.getElementById('forYou').scrollIntoView({behavior:'smooth',block:'start'}),0);}
+    function fetchListingsByIds(ids,callback){const clean=[...new Set((ids||[]).map(Number).filter(id=>Number.isFinite(id)&&id>0))].slice(0,24);if(!clean.length){callback([]);return;}const cached=clean.map(id=>listingCache.get(id)).filter(Boolean);const missing=clean.filter(id=>!listingCache.has(id));if(!missing.length){callback(clean.map(id=>listingCache.get(id)).filter(Boolean));return;}if(typeof google==='undefined'||!google.script||!google.script.run){callback(cached);return;}google.script.run.withSuccessHandler(items=>{cacheListings(items);callback(clean.map(id=>listingCache.get(id)).filter(Boolean));}).withFailureHandler(()=>callback(cached)).getPublicListingsByIds(missing);}
+    function suggestedListings(){const categoryScores=interestProfile.categories||{},locationScores=interestProfile.locations||{};const recentSet=new Set(recentViewIds);return [...listingCache.values()].filter(item=>!recentSet.has(Number(item.id))).sort((a,b)=>recommendationScore(b,categoryScores,locationScores)-recommendationScore(a,categoryScores,locationScores)||Number(b.id)-Number(a.id)).slice(0,6);}
+    function recommendationScore(item,categoryScores,locationScores){return Number(categoryScores[item.category]||0)*3+Number(locationScores[item.location]||0)*2+(item.featured?1:0)+(isListingNew(item)?.5:0);}
+    function hydratePersonalCollection(mode){mode=mode||personalMode;if(mode==='suggested'){personalItems=suggestedListings();renderPersonalized(mode);return;}const ids=mode==='saved'?[...favouriteIds]:recentViewIds;fetchListingsByIds(ids,items=>{personalItems=items;renderPersonalized(mode);});}
+    function renderPersonalized(mode){const title=document.getElementById('personalTitle'),description=document.getElementById('personalDescription'),grid=document.getElementById('personalizedGrid');if(mode==='saved'){title.textContent='Your saved advertisements';description.textContent='Items you chose to keep for later on this device.';}else if(mode==='suggested'){title.textContent='Suggested for you';const hasSignals=Object.keys(interestProfile.categories||{}).length||Object.keys(interestProfile.locations||{}).length;description.textContent=hasSignals?'Based only on categories and locations viewed in this browser.':'A useful mix of featured and recently approved advertisements.';}else{title.textContent='Continue browsing';description.textContent='Quickly reopen advertisements you recently viewed.';}grid.innerHTML=personalItems.length?personalItems.slice(0,6).map(item=>listingCardHtml(item)).join(''):`<div class="mini-empty"><h3>${mode==='saved'?'No saved advertisements yet':mode==='recent'?'No recently viewed advertisements yet':'No suggestions yet'}</h3><p>${mode==='saved'?'Tap the heart on any listing to save it.':mode==='recent'?'Open a listing and it will appear here.':'Browse a few categories to receive useful local suggestions.'}</p></div>`;}
+    function clearBrowsingHistory(){recentViewIds=[];interestProfile={};storageRemove('mvmarket-recent-views');storageRemove('mvmarket-interest-profile');renderReturnExperience();hydratePersonalCollection(personalMode);showToast('Browsing history cleared. Saved advertisements were kept.');}
+    function openDeepLinkedListing(){if(!deepLinkedListingId||window._deepLinkHandled)return;window._deepLinkHandled=true;setTimeout(()=>openDetails(deepLinkedListingId),120);}
+
+    function reportListing(id) { const item = getListingById(id); if (!item) return; const reference = item.reference || `AD-${new Date().getFullYear()}-${String(item.id).padStart(6,'0')}`; const subject = encodeURIComponent(`Report advertisement ${reference}`); const body = encodeURIComponent(`Advertisement: ${item.title}\nReference: ${reference}\nReason for report:\n`); window.location.href = `mailto:${SETTINGS.companyEmail}?subject=${subject}&body=${body}`; }
+    function openPostModal() { if (!asBool(SETTINGS.postingEnabled)) { showToast('Advertisement posting is currently disabled.'); return; } openMember('&post=1'); }
+    function navigateInPlace(url) { const a=document.createElement('a');a.href=String(url||HOME_URL);a.target='_top';a.rel='noopener';document.body.appendChild(a);a.click();a.remove(); }
+    function openMember(extra='') { const url = (WEB_APP_URL ? WEB_APP_URL + '?page=member' : '?page=member') + extra; navigateInPlace(url); }
+    function openAdmin() { const url = WEB_APP_URL ? WEB_APP_URL + '?page=admin' : '?page=admin'; navigateInPlace(url); }
+    function openModal(id) { const modal=document.getElementById(id); if(!modal)return; window._lastModalFocus=document.activeElement; modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); document.body.classList.add('modal-open'); requestAnimationFrame(()=>modal.querySelector('button,.btn,a[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')?.focus({preventScroll:true})); }
+    function closeModal(id) { const modal=document.getElementById(id); if(!modal)return; modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); document.body.classList.remove('modal-open'); if(window._lastModalFocus&&document.contains(window._lastModalFocus))window._lastModalFocus.focus({preventScroll:true}); }
+    function outsideClose(event, id) { if (event.target.id === id) closeModal(id); }
+    function toggleFilters() { document.getElementById('filtersPanel').classList.toggle('open'); }
+    function showToast(message) { const toast = document.getElementById('toast'); toast.textContent = message; toast.classList.add('show'); clearTimeout(window.toastTimer); window.toastTimer = setTimeout(() => toast.classList.remove('show'), 3200); }
+    function formatPrice(item) { return Number(item.price || 0) === 0 ? 'Free' : `${escapeHtml(item.currency || SETTINGS.defaultCurrency || 'MVR')} ${Number(item.price || 0).toLocaleString()}`; }
+    function formatDate(date) { if (!date) return '—'; const raw=String(date); const parsed = new Date(raw.includes('T')?raw:raw.slice(0,10) + 'T00:00:00'); return Number.isNaN(parsed.getTime()) ? '—' : parsed.toLocaleDateString('en-GB', { day:'2-digit', month:'short' }); }
+    function asBool(value) { return value === true || String(value).toLowerCase() === 'true' || String(value) === '1'; }
+    function safeImageUrl(url) { return /^https:\/\//i.test(String(url || '')) ? String(url) : DEFAULT_IMAGE; }
+    function safeImage(url) { return escapeHtml(safeImageUrl(url)); }
+    function escapeHtml(value) { return String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+    function updateThemeIcon() { document.getElementById('themeToggle').textContent = document.body.classList.contains('dark') ? '☀' : '☾'; }
+    document.getElementById('themeToggle').addEventListener('click', () => { document.body.classList.toggle('dark'); storageSet('mvmarket-theme', document.body.classList.contains('dark') ? 'dark' : 'light'); updateThemeIcon(); });
+    function setPublicMenuOpen(open){const menu=document.getElementById('navLinks'),button=document.getElementById('menuBtn');menu.classList.toggle('open',!!open);button.setAttribute('aria-expanded',String(!!open));button.setAttribute('aria-label',open?'Close navigation menu':'Open navigation menu');}
+    document.getElementById('menuBtn').addEventListener('click', event => {event.stopPropagation();setPublicMenuOpen(!document.getElementById('navLinks').classList.contains('open'));});
+    document.querySelectorAll('#navLinks a').forEach(a => a.addEventListener('click', () => setPublicMenuOpen(false)));
+    document.addEventListener('click',event=>{if(window.matchMedia('(max-width:1050px)').matches&&!document.querySelector('.nav').contains(event.target))setPublicMenuOpen(false)});
+    window.addEventListener('resize',()=>{if(window.innerWidth>1050)setPublicMenuOpen(false)},{passive:true});
+    window.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal.open').forEach(m => closeModal(m.id)); });
+    function startPublicApp() {
+      try { init(); }
+      catch (error) {
+        console.error(error);
+        showSystemNotice('The website could not finish loading. Please refresh the page once.', true);
+      }
+    }
+    window.addEventListener('error', event => {
+      console.error(event.error || event.message);
+      const pageVisible = document.body && document.body.getBoundingClientRect().height > 0;
+      if (!pageVisible) showSystemNotice('The website encountered a display error. Please refresh the page once.', true);
+    });
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', startPublicApp, { once:true });
+    else startPublicApp();
+  </script>
+</body>
+</html>
