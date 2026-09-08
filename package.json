@@ -1,0 +1,17 @@
+{
+  "name": "atollo-apps-script",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Atollo Google Apps Script marketplace project",
+  "scripts": {
+    "login": "clasp login",
+    "pull": "clasp pull",
+    "push": "clasp push",
+    "push:force": "clasp push --force",
+    "open": "clasp open",
+    "deployments": "clasp deployments"
+  },
+  "devDependencies": {
+    "@google/clasp": "latest"
+  }
+}
